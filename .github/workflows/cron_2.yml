@@ -1,0 +1,21 @@
+name: Cron 1 hours
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 720
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Run cron
+      if: success()
+      run: |
+        docker run \
+        -e APP_NAME="${{ secrets.APP_NAME }}" \
+        -e APP_TOKEN="${{ secrets.APP_TOKEN }}" \
+        -e JOB_NAME="cron" \
+        ghcr.io/admicro/ytbotserver-cli:latest
