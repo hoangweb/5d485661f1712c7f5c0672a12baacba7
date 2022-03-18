@@ -1,1 +1,1 @@
-FROM ghcr.io/admicro/ytbotserver-cli
+FROM huyhoang08/ytbotserver
