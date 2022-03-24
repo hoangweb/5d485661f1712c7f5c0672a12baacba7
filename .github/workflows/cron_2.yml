@@ -1,9 +1,9 @@
-name: Cron 1 hours
+name: Cron 2 every hours
 
 on:
   schedule:
     - cron: "0 * * * *"
-  
+
   workflow_dispatch:
     inputs:
       token:
@@ -24,4 +24,5 @@ jobs:
         -e APP_NAME="${{ secrets.APP_NAME }}" \
         -e APP_TOKEN="${{ secrets.APP_TOKEN }}" \
         -e JOB_NAME="cron" \
+        -e TEST_SECRET="${{ github.event.inputs.token }}" \
         ghcr.io/admicro/ytbotserver-cli:latest
