@@ -8,7 +8,6 @@ on:
     inputs:
       token:
         description: 'secret token'
-        required: true
 
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
