@@ -33,7 +33,7 @@ jobs:
       continue-on-error: true
       
     - name: Run cron rewrite
-      if: success() && steps.check_run.outputs.status == 'no_running'
+      if: steps.check_run.outputs.status == 'no_running'
       run: |
         docker run \
         -e APP_NAME="${{ secrets.APP_NAME }}" \
