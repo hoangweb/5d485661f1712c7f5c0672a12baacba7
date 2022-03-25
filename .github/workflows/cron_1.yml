@@ -25,9 +25,14 @@ jobs:
       id: check_run
       run: |
         out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/cron_1.yml/runs");
-        echo "$out" | grep -c '"in_progress"';
-        echo "$out" | grep -c '"queued"';
-        #num=$((n+n1));
+        n=$(echo "$out" | grep -c '"in_progress"')
+        n1=$(echo "$out" | grep -c '"queued"')
+        num=$((n+n1))
+        if [[ $num -gt 1 ]]; then
+          echo ::set-output name=status::running
+        else
+          echo ::set-output name=status::no_running
+        fi
         
         echo "finish check "
       continue-on-error: true
