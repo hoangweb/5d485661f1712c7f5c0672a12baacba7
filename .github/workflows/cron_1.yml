@@ -24,7 +24,7 @@ jobs:
     - name: Check current job
       id: check_run
       run: |
-        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/${{env.GITHUB_JOB}}/runs");
+        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/${{github.job.name}}/runs");
         n=$(echo "$out" | grep -c '"in_progress"'  || true)
         n1=$(echo "$out" | grep -c '"queued"'  || true)
         num=$((n+n1))
