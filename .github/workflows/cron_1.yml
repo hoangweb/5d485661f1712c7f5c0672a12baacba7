@@ -27,7 +27,7 @@ jobs:
         out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/cron_1.yml/runs")
         n=$(echo "$out" | grep -c '"in_progress"')
         n1=$(echo "$out" | grep -c '"queued"')
-        num=`expr $n + $n1`
+        num=$((n+n1))
         if [[ $num -gt 1 ]]; then
           echo ::set-output name=status::running
         else
