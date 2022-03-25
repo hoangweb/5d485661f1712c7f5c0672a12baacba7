@@ -28,12 +28,8 @@ jobs:
         n=$(echo "$out" | grep -c '"in_progress"')
         n1=$(echo "$out" | grep -c '"queued"')
         num=$((n+n1))
-        if [[ $num -gt 1 ]]; then
-          echo ::set-output name=status::running
-        else
-          echo ::set-output name=status::no_running
-        fi
-        echo "finish check"
+        
+        echo "finish check $num"
       continue-on-error: false
     
     - name: Dump steps context
