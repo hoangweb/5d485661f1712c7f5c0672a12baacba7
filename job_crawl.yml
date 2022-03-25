@@ -1,0 +1,49 @@
+name: do job crawl by user
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: 'domain'
+        required: true
+      url:
+        description: 'scan url'
+        required: true
+      db_url:
+        description: 'db url'     
+        required: true
+      
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Check current job
+      id: check_run
+      run: |
+        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/job_crawl.yml/runs")
+        n=$(echo "$out" | grep -c '"in_progress"' || true)
+        n1=$(echo "$out" | grep -c '"queued"' || true)
+        num=$((n+n1))
+        if [[ $num -gt 1 ]]; then
+          echo ::set-output name=status::running
+        else
+          echo ::set-output name=status::no_running
+        fi
+      continue-on-error: true
+
+    - name: Dump steps context
+      env:
+        STEPS_CONTEXT: ${{ toJson(steps) }}
+      run: echo "$STEPS_CONTEXT"
+
+    - name: Run task
+      if: success()
+      run: |
+        docker run \
+        -e DOMAIN="${{ github.event.inputs.domain }}" \
+        -e SCAN_URL="${{ github.event.inputs.url }}" \
+        -e DB_URL="${{ github.event.inputs.db_url }}" \
+        ghcr.io/admicro/ytbcrawlsite:latest
