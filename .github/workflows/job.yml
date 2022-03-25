@@ -19,23 +19,31 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 720
+    timeout-minutes: 360
     steps:
     - uses: actions/checkout@master
     
     - name: Check current job
       id: check_run
       run: |
-        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/cron_1.yml/runs")
-        if [[ "$out" == *'"queued"'* || "$out" == *'"in_progress"'* ]]; then
+        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/job.yml/runs")
+        n=$(echo "$out" | grep -c '"in_progress"' || true)
+        n1=$(echo "$out" | grep -c '"queued"' || true)
+        num=$((n+n1))
+        if [[ $num -gt 1 ]]; then
           echo ::set-output name=status::running
         else
           echo ::set-output name=status::no_running
         fi
       continue-on-error: true
 
-    - name: Run cron rewrite
-      if: success() && steps.check_run.outputs.status == 'no_running'
+    - name: Dump steps context
+      env:
+        STEPS_CONTEXT: ${{ toJson(steps) }}
+      run: echo "$STEPS_CONTEXT"
+
+    - name: Run task
+      if: success()
       run: |
         docker run \
         -e APP_NAME="${{ secrets.APP_NAME }}" \

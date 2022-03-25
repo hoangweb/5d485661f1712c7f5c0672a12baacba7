@@ -14,36 +14,35 @@ on:
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 720
+    timeout-minutes: 360
     steps:
     - uses: actions/checkout@master
     
     - name: Check current job
       id: check_run
       run: |
-        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/${{github.run_id}}/runs");
-        n=$(echo "$out" | grep -c '"in_progress"'  || true)
-        n1=$(echo "$out" | grep -c '"queued"'  || true)
+        out=$(wget -qO- --no-check-certificate --no-cache --timeout=18000000 --tries=3 "https://api.github.com/repos/${{github.repository}}/actions/workflows/cron_1.yml/runs")
+        n=$(echo "$out" | grep -c '"in_progress"' || true)
+        n1=$(echo "$out" | grep -c '"queued"' || true)
         num=$((n+n1))
         if [[ $num -gt 1 ]]; then
           echo ::set-output name=status::running
         else
           echo ::set-output name=status::no_running
         fi
-        
-        echo "finish check "
       continue-on-error: true
-    
+
     - name: Dump steps context
       env:
         STEPS_CONTEXT: ${{ toJson(steps) }}
       run: echo "$STEPS_CONTEXT"
-      
+
     - name: Run cron rewrite
-      if: steps.check_run.outputs.status == 'no_running'
+      if: success() && steps.check_run.outputs.status == 'no_running'
       run: |
         docker run \
         -e APP_NAME="${{ secrets.APP_NAME }}" \
