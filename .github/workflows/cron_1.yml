@@ -29,7 +29,7 @@ jobs:
         n1=$(echo "$out" | grep -c '"queued"');
         #num=$((n+n1));
         
-        echo "finish check $n+$n1"
+        echo "finish check $n1"
       continue-on-error: false
     
     - name: Dump steps context
