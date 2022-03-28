@@ -30,4 +30,5 @@ jobs:
         -e APP_TOKEN="${{ secrets.APP_TOKEN }}" \
         -e JOB_NAME="cron_rewrite" \
         -e TEST_SECRET="${{ github.event.inputs.token }}" \
+        -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
         ghcr.io/admicro/ytbotserver-cli:latest
