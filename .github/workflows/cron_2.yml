@@ -28,5 +28,6 @@ jobs:
         -e APP_NAME="${{ secrets.APP_NAME }}" \
         -e APP_TOKEN="${{ secrets.APP_TOKEN }}" \
         -e JOB_NAME="cron" \
+        -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
         -e TEST_SECRET="${{ github.event.inputs.token }}" \
         ghcr.io/admicro/ytbotserver-cli:latest
